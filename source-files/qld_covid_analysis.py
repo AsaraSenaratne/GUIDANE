@@ -1,16 +1,10 @@
-import pandas as pd
-from urllib.request import urlopen
-import urllib.request
-import json
-import csv
 from datetime import datetime, timedelta
-import numpy as py
-from sklearn.svm import OneClassSVM
-from sklearn import preprocessing
+import pandas as pd
 
 
 def fill_misssing_onset_date():
-    df = pd.read_csv("qld.csv")
+    print("Filling missing onset date and aggregating the data...")
+    df = pd.read_csv("../assets/qld.csv")
     missing_onset, day_dif_dict = [], {}
     for index, row in df.iterrows():
         day_dif, count,  = [], 0
@@ -39,7 +33,6 @@ def fill_misssing_onset_date():
     non_empty_dates = [day for day in list(df["onset_date"]) if str(day) != 'nan']
     for item in non_empty_dates:
         missing_onset.append(item)
-    print(missing_onset)
     df['adjusted_onset_date'] = missing_onset
     adjusted_onset_date = list(df['adjusted_onset_date'])
     new_date_format = []
@@ -60,7 +53,6 @@ def fill_misssing_onset_date():
     week_postcode_grouping(df)
 
 def days_between(d1, d2):
-    print(d1,d2)
     d1 = datetime.strptime(d1, "%Y-%m-%d")
     d2 = datetime.strptime(d2, "%Y-%m-%d")
     return abs((d2 - d1).days)
