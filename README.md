@@ -43,14 +43,14 @@ python3 main.py
 ```
 
 ## Folder structure of the project
-assets folder - this folder contains the datasets used for analysis. 
-results folder - all the plots, pickle files and CSV files that are generated as a result of program execution will be stored in this folder.
-source folder - source code files are within this folder.
+Assets folder - this folder contains the datasets used for analysis.  
+Results folder - all the plots, pickle files and CSV files that are generated as a result of program execution will be stored in this folder.  
+Source folder - source code files are within this folder.  
 Other files:
 * LICENSE - contains information of the license under which this project is available.
 * README - provides the users with an introduction to the project and guidance to use.
 * requirements.txt - text file with information about the packages used in this project.
 
 ## Reading the results folder
-This folder contains all graphs and other intermediary results files generated at different steps of program execution. The .csv files are available to view the initial nodes dataset, any intermediary supporting datasets built (such as merged datasets) and SVM output. 
-Visualization outputs are available as a tile plot and an association plot.
+The results folder contains all graphs and other intermediary results files generated at different steps of program execution. CSV files are available to view the initial nodes dataset, any intermediary supporting datasets built (such as merged datasets) and SVM output.  
+Visualization outputs are available as a tile plot and an association plot in .eps format.  
