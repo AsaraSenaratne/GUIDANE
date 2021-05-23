@@ -22,22 +22,24 @@ Following Python packages are used in the projet.
 * scikit_learn v0.24.2
 
 ## Execute the project
-Clone the project using the URL:
-https://github.com/AsaraSenaratne/abnormality-detection.git
+Clone the project:
+```
+git clone https://github.com/AsaraSenaratne/abnormality-detection.git
+```
 
 Install the required packages:
 ```
-$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 Open a terminal and change directory to the cloned project:
 ```
-$ cd <path_to_directory>/abnormality-detection
+cd <path_to_directory>/abnormality-detection
 ```
 
 Run main.py:
 ```
-$ python3 main.py
+python3 main.py
 ```
 
 ## Reading the results
