@@ -25,13 +25,19 @@ Following Python packages are used in the projet.
 Clone the project using the URL:
 https://github.com/AsaraSenaratne/abnormality-detection.git
 
-Install the required packages
+Install the required packages:
+```
 $ pip install -r requirements.txt
+```
 
-Open a terminal and change directory to the cloned project
+Open a terminal and change directory to the cloned project:
+```
 $ cd <path_to_directory>/abnormality-detection
+```
 
-Run main.py
+Run main.py:
+```
 $ python3 main.py
+```
 
 ## Reading the results
