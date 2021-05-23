@@ -10,3 +10,28 @@ relationships between the features that mostly influence the abnormality of node
 ## Technologies
 This project is implemented using:
 * Python 3.6
+
+Following Python packages are used in the projet. 
+* pandas v1.0.1
+* plotly v4.8.2
+* matplotlib v3.2.0
+* seaborn v0.11.0
+* networkx v2.4
+* statsmodels v0.12.0
+* numpy v1.19.1
+* scikit_learn v0.24.2
+
+## Execute the project
+Clone the project using the URL:
+https://github.com/AsaraSenaratne/abnormality-detection.git
+
+Install the required packages
+$ pip install -r requirements.txt
+
+Open a terminal and change directory to the cloned project
+$ cd <path_to_directory>/abnormality-detection
+
+Run main.py
+$ python3 main.py
+
+## Reading the results
