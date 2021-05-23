@@ -43,7 +43,7 @@ def create_dataframe_grouped_by_postcode():
                        mid_aged_count=df.loc[subgroup.index[i], "mid_aged_count"],
                        old_aged_count=df.loc[subgroup.index[i], "old_aged_count"],
                        patient_count = df.loc[subgroup.index[i],"patient_count"],)
-        for i in range(0, len(subgroup.index) - 1):  # add an edge from one node to another within a bundle
+        for i in range(0, len(subgroup.index) - 1):
             for j in range(i + 1, len(subgroup.index)):
                 G.add_edge(subgroup.index[i], subgroup.index[j])
                 groupid = G.nodes[subgroup.index[i]]['postcode']
@@ -105,7 +105,7 @@ def create_dataframe_grouped_by_week():
                        mid_aged_count=df.loc[subgroup.index[i], "mid_aged_count"],
                        old_aged_count=df.loc[subgroup.index[i], "old_aged_count"],
                        patient_count=df.loc[subgroup.index[i], "patient_count"], )
-        for i in range(0, len(subgroup.index) - 1):  # add an edge from one node to another within a bundle
+        for i in range(0, len(subgroup.index) - 1):
             for j in range(i + 1, len(subgroup.index)):
                 G.add_edge(subgroup.index[i], subgroup.index[j])
                 groupid = G.nodes[subgroup.index[i]]['week_number']
@@ -136,7 +136,7 @@ def create_dataframe_grouped_by_week():
                                                                            int(HighYoungAgedCount),
                                                                            int(HighMidAgedCount), int(HighOldAgedCount),
                                                                            int(HighPatientCount)]
-                # break
+
 
     graph_features = pd.DataFrame(linkdict, index=['groupid', "HighHospitalisedCount", "HighDeceasedCount", "HighLocalUnidenInterTravCount", "HighOverseasAcqCount",
                                                     "HighLocalAcqKnownCount", "HighUnderInvestCount", "HighIndigenousCount", 'HighICUCount', 'HighVentilatedCount',
@@ -236,7 +236,6 @@ def create_dataframe_grouped_by_week_n_postcode():
                                                                            int(HighYoungAgedCount),
                                                                            int(HighMidAgedCount), int(HighOldAgedCount),
                                                                            int(HighPatientCount)]
-                # break
 
     graph_features = pd.DataFrame(linkdict, index=['groupid', "HighHospitalisedCount", "HighDeceasedCount", "HighLocalUnidenInterTravCount", "HighOverseasAcqCount",
                                                     "HighLocalAcqKnownCount", "HighUnderInvestCount", "HighIndigenousCount", 'HighICUCount', 'HighVentilatedCount',
@@ -249,7 +248,6 @@ def create_dataframe_grouped_by_week_n_postcode():
 
 def feature_reduction():
     df = pd.read_pickle("qld_edges_grouped_by_week_n_postcode.pkl")
-    print(df.columns)
     for col in df.columns:
         count_unique = len(df[col].unique())
         if count_unique == 1:

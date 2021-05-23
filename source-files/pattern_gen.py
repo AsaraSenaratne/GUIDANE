@@ -1,38 +1,33 @@
 import seaborn as sns;
 sns.set_theme(color_codes=True)
-from itertools import islice
 import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
-from sklearn.cluster import KMeans
 import math
 from statsmodels.graphics.mosaicplot import mosaic
 import matplotlib.patches as mpatches
 import seaborn as sns; sns.set_theme(color_codes=True)
-from sklearn.metrics import silhouette_score
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import csv
 from statistics import median
+import parameters as pm
 
 
-name = "QLD Nodes"
-svm_output_file = "svm_output_qld_nodes.pkl"
+name = pm.name
+svm_output_file = pm.svm_output_file
+tile_plot_file_name = pm.tile_plot_file_name
+association_plot_file_name = pm.association_plot_file_name
 
 def identify_consistent_features():
+    print("Identifying consistency of the features...")
     df = pd.read_pickle(svm_output_file)
-    print(df.columns)
     cols_extracted = {}
     for col in df.columns[:-2]:
         two_col_df = df[[col, "svm_binary_output"]]
         two_col_df['counter'] = 1
-        # groups = two_col_df.groupby([col, "svm_binary_output"])['COUNTER'].sum() #this gives a dataframe with gaps
         groups = two_col_df.groupby([col, "svm_binary_output"])[
             'counter'].sum().reset_index()  # this removes gaps in the dataframe
         FA, FN, TA, TN = 0,0,0,0
         for val in groups[col].unique():
-            print(groups.loc[groups[col] == 0])
-            print(groups.loc[groups[col] == 1])
             if val == 0:
                 sub_groups = groups.loc[groups[col] == val]
                 for index, row in sub_groups.iterrows():
@@ -49,15 +44,8 @@ def identify_consistent_features():
                         TN = row["counter"]
         consistency_score = abs((TN/(TN+FN)) - (TA/(TA+FA)))
         consistency_score = round(consistency_score, 4)
-        print(consistency_score)
         cols_extracted[col] = consistency_score
     cols_extracted = dict(sorted(cols_extracted.items(), key=lambda item: item[1], reverse=True))
-    print(cols_extracted)
-    keys = cols_extracted.keys()
-    values = cols_extracted.values()
-    # plt.bar(keys, values)
-    # plt.xticks(rotation=90, fontsize=5)
-    # plt.savefig("QLDN.png")
     extract_consistent_features(df, cols_extracted)
 
 def extract_consistent_features(df, cols_extracted):
@@ -94,9 +82,7 @@ def cal_col_weight(abnormal_group, cols_extracted):
         col_weight.append(weight)
     col_weight.append("NaN")
     col_weight.append("NaN")
-    print(col_weight)
     abnormal_group.loc["support"] = col_weight
-    print(abnormal_group)
     style_pattern_table(abnormal_group, cols_extracted)
 
 def style_pattern_table(abnormal_group, cols_extracted):
@@ -121,7 +107,7 @@ def style_pattern_table(abnormal_group, cols_extracted):
     pattern_dataframe = pattern_dataframe.append(abnormal_group.iloc[-1, :-2])
     styled = (pattern_dataframe.style.applymap(
         lambda v: 'background-color:blue' if v == '1' else '' 'background-color:red' if v == '0' else ''))
-    styled.to_excel("styled_pattern_table.xlsx")
+    # styled.to_excel("../results/styled_pattern_table.xlsx")
     expand_kmeans_visualize(pattern_dataframe, cols_extracted)
 
 def expand_kmeans_visualize(df, cols_extracted):
@@ -134,20 +120,20 @@ def expand_kmeans_visualize(df, cols_extracted):
         for i in range(0, int(rows["pattern_occurence"])):
             expanded_numerical_table.loc[k] = list(rows)
             k += 1
-    expanded_numerical_table.to_csv("expanded_numerical_table.csv")
+    # expanded_numerical_table.to_csv("expanded_numerical_table.csv")
 
     # method call to create the association graph
     create_association_graph(expanded_numerical_table)
 
     # implementation of agglomerative clustering
     if len(dataframe) > 5:
+        print("Conducting agglomerative clustering...")
         clustering_df = pd.DataFrame(columns=["pattern", "pattern_occurence"])
         clustering_df["pattern"] = df["pattern_id"].iloc[:-1]
         clustering_df["pattern_occurence"] = df["pattern_occurence"].iloc[:-1]
         clustering_df['pattern'] = clustering_df['pattern'].astype(str)
         clustering_df.to_csv("agglomerative_clustering.csv")
         clustering_df = clustering_df.sort_values(['pattern'])
-        print(clustering_df)
 
         patterns_list, patterns_dict = [], {}
         for item in list(clustering_df["pattern"]):
@@ -157,7 +143,6 @@ def expand_kmeans_visualize(df, cols_extracted):
             patterns_list.append([unique_cluster])
             row = clustering_df.loc[clustering_df['pattern'] == item]
             patterns_dict[item] = int(row["pattern_occurence"])
-        print(patterns_list)
 
         while True:
             if len(patterns_list) <= 5:
@@ -178,10 +163,8 @@ def expand_kmeans_visualize(df, cols_extracted):
                     leading_patterns_dict[max_pattern] = max_pattern_occurrence
                     pattern = pattern.rstrip(", ")
                     cluster_dict[pattern] = sum_pattern_occurence
-                print(cluster_dict)
-                print(leading_patterns_dict)
                 clustered_df = pd.DataFrame(cluster_dict.items(), columns=['pattern', 'pattern_occurence'])
-                clustered_df.to_csv('agglomerative_clustering.csv', mode='a', header=True)
+                # clustered_df.to_csv('agglomerative_clustering.csv', mode='a', header=True)
                 break
             else:
                 max_sim, c1, c2, c3, c4, c5, pattern_summation1, pattern_summation2 = -1, [], [], [], [], [], 0, 0
@@ -194,9 +177,7 @@ def expand_kmeans_visualize(df, cols_extracted):
                             c2 = patterns_list[j]
                         elif avg_sim == max_sim:
                             summation_of_counts_1 = find_pattern(c1, c2, patterns_dict)
-                            print(c1, c2, summation_of_counts_1)
                             summation_of_counts_2 = find_pattern(patterns_list[i], patterns_list[j], patterns_dict)
-                            print(patterns_list[i], patterns_list[j], summation_of_counts_2)
                             if summation_of_counts_1 > summation_of_counts_2:
                                 c1 = patterns_list[i]
                                 c2 = patterns_list[j]
@@ -204,62 +185,11 @@ def expand_kmeans_visualize(df, cols_extracted):
                 patterns_list.remove(c1)
                 patterns_list.remove(c2)
         draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_extracted)
-        exit(0)
     else:
-        dataframe = df.iloc[:, 1:-1]
-        columns_for_mosaic = dataframe.columns
-        data, labels, props = {}, {}, {}
-        for col in columns_for_mosaic:
-            for index, row in df.iloc[:-1, :].iterrows():
-                # set the tile size {(predicate,cluster_size):col_weight*cluster_size}
-                data[(col, str(row["pattern_id"]))] = (float(dataframe[col].iloc[-1]) * row[
-                    "pattern_occurence"]) / 100
-
-                if row[col] == '1':
-                    label = 1
-                    labels[(col, str(row["pattern_id"]))] = ""
-                else:
-                    label = 0
-                    labels[(col, str(row["pattern_id"]))] = ""
-
-                if label == 1:
-                    color = "#063b00"
-                else:
-                    color = "#0eff00"
-
-                # set the color of the tiles
-                props[(col, str(row["pattern_id"]))] = {'color': color}
-
-    data = dict(sorted(data.items(), key=lambda item: item[1], reverse=True))
-    print(data)
-    print(labels)
-
-    fig, ax = plt.subplots(1, 1, figsize=(100, 200))
-    labelizer = lambda k: labels[k]
-    plt.xlabel('Features', fontsize=100)
-    plt.ylabel('Binary Patterns', fontsize=100)
-    plt.xticks(fontsize=100)
-    plt.yticks(fontsize=100)
-    plt.rcParams['font.size'] = 70.0  # set general font size
-    plt.rcParams['text.color'] = 'white'  # set general font size
-    plt.rcParams["legend.facecolor"] = '#808080'
-    plt.rc('axes', titlesize=100)
-    plt.rc('legend', fontsize=100)
-
-    s1 = mpatches.Patch(color='#063b00', label='80-100')
-    s2 = mpatches.Patch(color='#0a5d00', label='60-79.99')
-    s3 = mpatches.Patch(color='#089000', label='40-59.99')
-    s4 = mpatches.Patch(color='#1fc600', label='20-39.99')
-    s5 = mpatches.Patch(color='#0eff00', label='0-19.99')
-
-    title = 'Mosaic Plot of ' + name
-    # plt.legend(handles=[s1, s2, s3, s4, s5], bbox_to_anchor=(0, 1.05), loc='lower left', borderaxespad=0., fontsize=60)
-    mosaic(data, label_rotation=45, title=title, labelizer=labelizer, properties=props, ax=ax)
-    plt.savefig("mosaic_plot.eps")
+        draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_extracted)
 
 def draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_extracted):
-    print(leading_patterns_dict, cols_extracted)
-    print("cluster dict", cluster_dict)
+    print("Plotting the mosaic plot...")
     dataframe = df.iloc[:, 1:-1]
     tot_abnormal_records = sum(cluster_dict.values())
     columns_for_mosaic = dataframe.columns
@@ -280,7 +210,6 @@ def draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_ext
                     row = clustering_df.loc[clustering_df['pattern'] == item]
                     count_of_trues += int(row["pattern_occurence"])
             percentage_on_tile = float(count_of_trues / cluster_dict[original_key])
-            print(col, percentage_on_tile)
 
             # get the cluster size of the cluster representative
             cluster_size = [cluster_dict[key] for key in cluster_dict.keys() if pattern in key]
@@ -360,8 +289,6 @@ def draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_ext
             modified_dict[(key2, xtick_label)] = dictionary[key]
             # del dictionary[key]
     data = modified_dict
-    print(data)
-    print(key_pair_dict)
 
     new_props = {}
     for key in key_pair_dict.keys():
@@ -384,22 +311,21 @@ def draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_ext
     legend_labels = ["100%", "75% - 99%", "50% - 74%", "25% - 49%", "1% - 24%", "0%"]
     handles, i = [], 0
     for key in pal_hls:
-        handle = "s" + str(i)
         handle = mpatches.Patch(color=key, label=legend_labels[i])
         i += 1
         handles.append(handle)
 
     # bbox_to_anchor = (how much to go along x-axis. Higher the further, how much to go along y-axis
-    title = name+"\n"
     fig, ax = plt.subplots(constrained_layout=True)  # set constrained layout to true so nothing gets cropped
     mosaic(data, label_rotation=0, title="", horizontal=False, properties=props, labelizer=labelizer, gap=0.01,ax=ax)
     fig.legend(handles=handles, bbox_to_anchor=(1.12, 0.8), loc='upper right', borderaxespad=0., fontsize=9)
     plt.xticks(fontsize=14, rotation=0)
     plt.yticks(fontsize=5)
     plt.grid(False)
-    fig.savefig("tile_plot_qld_nodes.eps", bbox_inches='tight')
+    fig.savefig(tile_plot_file_name, bbox_inches='tight')
 
 def create_association_graph(df):
+    print("Plotting the association plot...")
     length_df = len(df)
     columns_list = list(df.iloc[:, 1:-1].columns)
     with open('support_calc_qld_nodes.csv', 'w', newline='') as file:
@@ -450,7 +376,6 @@ def create_association_graph(df):
     support_df = support_df.sort_values(['MaximumSupport'], ascending=False)
     support_df.to_csv("support_calc_qld_nodes.csv")
 
-    print("new implementation of flipped features")
     feature_support_criteria_dict, feature_support_dict, features_normal, features_flipped = {}, {}, {}, {}
     words_to_remove_dict = {"Same": "Diff", "Present": "Absent", "Match": "Mismatch", "High": "Low",
                             "Common": "Uncom", "Before": "After", "Complete": "Incomp"}
@@ -497,7 +422,6 @@ def create_association_graph(df):
                         new_features_list.append(new_feature)
             new_key = tuple(new_features_list)
             flipped_feature_support_dict[new_key] = feature_support_dict[key]
-    print("flipped_feature_support_dict: ", flipped_feature_support_dict)
 
     G = nx.Graph()
     dict_edges = {k: v for k, v in
@@ -544,7 +468,6 @@ def create_association_graph(df):
             xtick_label = adjusted_nodes_dict[key][0:list_uppercase_index[2]] + "\n" + adjusted_nodes_dict[key][
                                                                                        list_uppercase_index[2]:]
         new_data_dict[key] = xtick_label
-    print(new_data_dict)
     G = nx.relabel_nodes(G, new_data_dict)
     nx.draw_networkx_labels(G, pos, new_data_dict, font_size=10, ax=ax, font_weight="bold")
 
@@ -554,7 +477,7 @@ def create_association_graph(df):
     t, b = plt.ylim()
     plt.xlim(l - 0.4, r + 0.5)
     plt.ylim(t - 0.1, b + 0.2)
-    fig.savefig("association_graph_qld_nodes.eps")
+    fig.savefig(association_plot_file_name)
 
 def hamming_dist(vec1, vec2):
     l1, l2 = len(vec1), len(vec2)
@@ -596,4 +519,3 @@ def find_pattern(item1, item2, patterns_dict):
 
     return sum_pattern_occurence
 
-identify_consistent_features()

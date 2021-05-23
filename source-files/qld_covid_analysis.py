@@ -50,14 +50,16 @@ def fill_misssing_onset_date():
         week_num = datetime.date(date_time_obj).isocalendar()[1]
         week_number.append(week_num)
     df["week_number"] = week_number
-    week_postcode_grouping(df)
+    df.to_csv("../results/qld_onset_date_imputed.csv")
+    week_postcode_grouping()
 
 def days_between(d1, d2):
     d1 = datetime.strptime(d1, "%Y-%m-%d")
     d2 = datetime.strptime(d2, "%Y-%m-%d")
     return abs((d2 - d1).days)
 
-def week_postcode_grouping(df):
+def week_postcode_grouping():
+    df = pd.read_csv("../results/qld_onset_date_imputed.csv")
     df['counter'] = 1
     columns_binary = ['hospitalisaed', 'not_hospitalised', 'deceased','localacq_unident_interstate_trvl', 'overseas_acquired',
        'locally_acquired_contact_known', 'locally_acquired_unidentified','under_investigation']
@@ -132,9 +134,11 @@ def week_postcode_grouping(df):
     column_name = "patient_count"
     row = pd.Series(dict, name=column_name)
     dataframe[column_name] = row
-    merge_postcode_date(dataframe)
+    dataframe.to_csv("../results/qld_groupby_postcode_week.csv")
+    merge_postcode_date()
 
-def merge_postcode_date(df):
+def merge_postcode_date():
+    df = pd.read_csv("../results/qld_groupby_postcode_week.csv")
     key = []
     for index, row in df.iterrows():
         key_val = str(int(row[0])) +"_"+ str(int(row[1]))
@@ -142,6 +146,7 @@ def merge_postcode_date(df):
     df["index"] = key
     df = df.set_index(["index"])
     df.rename(columns={'0': 'week_number', '1': 'postcode'}, inplace=True)
+    print(df)
     feature_reduction(df)
 
 def feature_reduction(df):
@@ -159,7 +164,7 @@ def feature_reduction(df):
     df.drop('died_count', inplace=True, axis=1)
     df.drop('hospitalized_count', inplace=True, axis=1)
     df.to_pickle("../results/qld_groupby_postcode_week_reduced_cols_not_norm.pkl")
+    df.to_csv("../results/qld_groupby_postcode_week_reduced_cols_not_norm.csv")
+    print("Dataframe created and ready to use for node features creation...")
 
-
-fill_misssing_onset_date()
 
