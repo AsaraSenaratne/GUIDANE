@@ -65,35 +65,34 @@ def execute_israel_edges(dataset):
     isredges.add_week_number()
     svm.def_params(dataset)
     pg.def_params(dataset)
-    isredges.identify_consistent_features()
     print("Generated plots are available in the results folder...")
 
-# try:
-if dataset == 1:
-    execute_qld_nodes(dataset)
-elif dataset == 2:
-    if os.path.isfile('../results/qld_groupby_postcode_week_reduced_cols_not_norm.pkl'):
-        execute_qld_temporal_edges(dataset)
+try:
+    if dataset == 1:
+        execute_qld_nodes(dataset)
+    elif dataset == 2:
+        if os.path.isfile('../results/qld_groupby_postcode_week_reduced_cols_not_norm.pkl'):
+            execute_qld_temporal_edges(dataset)
+        else:
+            print("-----------------------------------")
+            print("First execute QLD nodes dataset before proceeding with any of QLD edge datasets...")
+    elif dataset == 3:
+        if os.path.isfile('../results/qld_groupby_postcode_week_reduced_cols_not_norm.pkl'):
+            execute_qld_spatial_edges(dataset)
+        else:
+            print("-----------------------------------")
+            print("First execute QLD nodes dataset before proceeding with any of QLD edge datasets...")
+    elif dataset == 4:
+        if os.path.isfile('../results/qld_groupby_postcode_week_reduced_cols_not_norm.pkl'):
+            execute_qld_temp_spa_edges(dataset)
+        else:
+            print("-----------------------------------")
+            print("First execute QLD nodes dataset before proceeding with any of QLD edge datasets...")
+    elif dataset == 5:
+        execute_israel_nodes(dataset)
+    elif dataset == 6:
+        execute_israel_edges(dataset)
     else:
-        print("-----------------------------------")
-        print("First execute QLD nodes dataset before proceeding with any of QLD edge datasets...")
-elif dataset == 3:
-    if os.path.isfile('../results/qld_groupby_postcode_week_reduced_cols_not_norm.pkl'):
-        execute_qld_spatial_edges(dataset)
-    else:
-        print("-----------------------------------")
-        print("First execute QLD nodes dataset before proceeding with any of QLD edge datasets...")
-elif dataset == 4:
-    if os.path.isfile('../results/qld_groupby_postcode_week_reduced_cols_not_norm.pkl'):
-        execute_qld_temp_spa_edges(dataset)
-    else:
-        print("-----------------------------------")
-        print("First execute QLD nodes dataset before proceeding with any of QLD edge datasets...")
-elif dataset == 5:
-    execute_israel_nodes(dataset)
-elif dataset == 6:
-    execute_israel_edges(dataset)
-else:
-    print("Invalid number entered")
-# except:
-#     print("An error occurred during execution")
+        print("Invalid number entered")
+except:
+    print("An error occurred during execution...")
