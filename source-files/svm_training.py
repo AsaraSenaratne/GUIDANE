@@ -3,18 +3,20 @@ import pandas as pd
 from sklearn.svm import OneClassSVM
 import parameters as pm
 
-dataframemain = pm.dataframemain
-initial_attribute_count = pm.initial_attribute_count
-
+def def_params(dataset):
+    pm.params(dataset)
+    global dataframemain, initial_attribute_count, svm_output_pkl, budget
+    dataframemain = pd.read_pickle(pm.params.dataframemain)
+    initial_attribute_count = pm.params.initial_attribute_count
+    svm_output_pkl = pm.params.svm_output_pkl
+    budget = pm.params.budget
+    skye_nodes_get_abnormal_count()
 
 def skye_nodes_get_abnormal_count():
     print("Started learning one-class SVM...")
-    dataframemain = pm.dataframemain
-    initial_attribute_count = pm.initial_attribute_count
     list_of_date_postcodes = list(dataframemain.index)
     new_dataframe = pd.DataFrame(list_of_date_postcodes)
     birth_X = dataframemain.iloc[:, initial_attribute_count:]
-    budget = 1000
     records_count = len(birth_X.index)
     nu = budget / records_count
     for kernel in ['rbf', 'sigmoid', 'linear', 'poly']:
@@ -51,12 +53,9 @@ def skye_nodes_get_abnormal_count():
         for i in range(0, len(sorted_dic)):
             datanormalized.append(sorted_dic[i][1])
         new_dataframe[kernel + "_score_output_normalized"] = datanormalized
-    # new_dataframe.to_pickle(dataframe_with_abnormal_counts_pkl)
-    # new_dataframe.to_csv(dataframe_with_abnormal_counts_csv)
     count_abnormal_pickups(new_dataframe)
 
 def count_abnormal_pickups(dataframemain):
-    # dataframemain = pd.read_pickle(dataframe_with_abnormal_counts_pkl)
     count_list = []
     for index, row in dataframemain.iterrows():
         count = 0
@@ -68,11 +67,9 @@ def count_abnormal_pickups(dataframemain):
                 continue
         count_list.append(count)
     dataframemain['count_of_abnormal_pickups'] = count_list
-    # dataframemain.to_pickle(dataframe_with_abnormal_counts_pkl)
     sum_abnormal_score(dataframemain)
 
 def sum_abnormal_score(dataframemain):
-    # dataframemain = pd.read_pickle(dataframe_with_abnormal_counts_pkl)
     count_list = []
     for index, row in dataframemain.iterrows():
         count = 0
@@ -81,11 +78,9 @@ def sum_abnormal_score(dataframemain):
             count += col
         count_list.append(count)
     dataframemain['total_score_abnormal_pickups'] = count_list
-    # dataframemain.to_pickle(dataframe_with_abnormal_counts_pkl)
     calculate_average_score(dataframemain)
 
 def calculate_average_score(dataframemain):
-    # dataframemain = pd.read_pickle(dataframe_with_abnormal_counts_pkl)
     count_list = []
     for index, row in dataframemain.iterrows():
         si = row['total_score_abnormal_pickups'] / 4
@@ -99,13 +94,9 @@ def calculate_average_score(dataframemain):
         else:
             list_adjusted_svm.append(1)
     dataframemain['adjusted_svm'] = list_adjusted_svm
-    # dataframemain.to_csv(weighted_score_output_csv)
-    # dataframemain.to_pickle(weighted_score_output_pkl)
     reconstruct_dataframe(dataframemain)
 
 def reconstruct_dataframe(new_dataframemain):
-    # new_dataframemain = pd.read_pickle(weighted_score_output_pkl)
-    print(dict(zip(new_dataframemain[0], new_dataframemain['adjusted_svm'])))
     dict_svm_output = dict(zip(new_dataframemain[0], new_dataframemain['adjusted_svm']))
     dict_weighted_score = dict(zip(new_dataframemain[0], new_dataframemain['average_score']))
 
@@ -118,7 +109,6 @@ def reconstruct_dataframe(new_dataframemain):
     row = pd.Series(dict_weighted_score, name="average_score")
     old_dataframemain["average_score"] = row
     old_dataframemain = old_dataframemain.sort_values(by=["average_score"], ascending=True)
-    old_dataframemain.to_pickle(pm.svm_output_pkl)
-    # old_dataframemain.to_csv(pm.svm_output_csv)
+    old_dataframemain.to_pickle(svm_output_pkl)
     print("SVM learning completed...")
 

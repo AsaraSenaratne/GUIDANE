@@ -1,5 +1,17 @@
 import networkx as nx
 import pandas as pd
+import parameters as pm
+
+def def_params(dataset):
+    pm.params(dataset)
+    global edges_file
+    edges_file = pm.params.edges_file
+    if dataset == 2:
+        create_dataframe_grouped_by_postcode()
+    elif dataset == 3:
+        create_dataframe_grouped_by_week()
+    else:
+        create_dataframe_grouped_by_week_n_postcode()
 
 
 def sum_age_columns():
@@ -72,9 +84,8 @@ def create_dataframe_grouped_by_postcode():
                                                     "HighMalesThanFemales", "HighYoungAgedCount", "HighMidAgedCount", 'HighOldAgedCount', 'HighPatientCount',
                                                    ])
     graph_features = graph_features.transpose()
-    print(graph_features)
-    graph_features.to_csv('qld_edges_grouped_by_postcode.csv')
-    graph_features.to_pickle('qld_edges_grouped_by_postcode.pkl')
+    graph_features.to_pickle(edges_file)
+    feature_reduction(graph_features)
 
 def create_dataframe_grouped_by_week():
     df = sum_age_columns()
@@ -143,9 +154,8 @@ def create_dataframe_grouped_by_week():
                                                     "HighMalesThanFemales", "HighYoungAgedCount", "HighMidAgedCount", 'HighOldAgedCount', 'HighPatientCount',
                                                            ])
     graph_features = graph_features.transpose()
-    print(graph_features)
-    graph_features.to_csv('qld_edges_grouped_by_week.csv')
-    graph_features.to_pickle('qld_edges_grouped_by_week.pkl')
+    graph_features.to_pickle(edges_file)
+    feature_reduction(graph_features)
 
 def create_dataframe_grouped_by_week_n_postcode():
     df = sum_age_columns()
@@ -154,12 +164,10 @@ def create_dataframe_grouped_by_week_n_postcode():
     sorted_week_numbers = sorted(list(df["week_number"].unique()))
     for week in sorted_week_numbers:
         subgroup = groups.get_group(week)
-        print("subgroup", subgroup)
         if sorted_week_numbers.index(week) == (len(sorted_week_numbers)-1):
             break
         else:
             subgroup_next = groups.get_group(int(week+1))
-            print("next", subgroup_next)
         G = nx.Graph()
         for i in range(0, len(subgroup.index)):
             G.add_node(subgroup.index[i],
@@ -242,29 +250,20 @@ def create_dataframe_grouped_by_week_n_postcode():
                                                     "HighMalesThanFemales", "HighYoungAgedCount", "HighMidAgedCount", 'HighOldAgedCount', 'HighPatientCount',
                                                            ])
     graph_features = graph_features.transpose()
-    print(graph_features)
-    graph_features.to_csv('qld_edges_grouped_by_week_n_postcode.csv')
-    graph_features.to_pickle('qld_edges_grouped_by_week_n_postcode.pkl')
+    graph_features.to_pickle(edges_file)
+    feature_reduction(graph_features)
 
-def feature_reduction():
-    df = pd.read_pickle("qld_edges_grouped_by_week_n_postcode.pkl")
+def feature_reduction(df):
     for col in df.columns:
         count_unique = len(df[col].unique())
         if count_unique == 1:
-            print(col)
             df.drop(col, inplace=True, axis=1)
-    print(df.columns)
     columns = list(df.columns)
     for i in range(0, len(columns)-1):
         for j in range(i+1, len(columns)):
             correlation = df[columns[i]].corr(df[columns[j]])
             if correlation == 1:
-                print(columns[i], columns[j])
-    df.to_csv('qld_edges_grouped_by_week_n_postcode.csv')
-    df.to_pickle('qld_edges_grouped_by_week_n_postcode.pkl')
+                print("Correlated Features: ", columns[i], columns[j])
+    df.to_pickle(edges_file)
+    print("Compeleted creating node features...")
 
-
-create_dataframe_grouped_by_postcode()
-create_dataframe_grouped_by_week()
-create_dataframe_grouped_by_week_n_postcode()
-feature_reduction()

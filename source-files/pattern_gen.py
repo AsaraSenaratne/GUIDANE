@@ -11,11 +11,16 @@ import csv
 from statistics import median
 import parameters as pm
 
-
-name = pm.name
-svm_output_file = pm.svm_output_file
-tile_plot_file_name = pm.tile_plot_file_name
-association_plot_file_name = pm.association_plot_file_name
+def def_params(dataset):
+    pm.params(dataset)
+    global ds, name, svm_output_file, support_file, tile_plot_file_name, association_plot_file_name
+    ds = dataset
+    name = pm.params.name
+    svm_output_file = pm.params.svm_output_file
+    support_file = pm.params.support_file
+    tile_plot_file_name = pm.params.tile_plot_file_name
+    association_plot_file_name = pm.params.association_plot_file_name
+    identify_consistent_features()
 
 def identify_consistent_features():
     print("Identifying consistency of the features...")
@@ -132,7 +137,7 @@ def expand_kmeans_visualize(df, cols_extracted):
         clustering_df["pattern"] = df["pattern_id"].iloc[:-1]
         clustering_df["pattern_occurence"] = df["pattern_occurence"].iloc[:-1]
         clustering_df['pattern'] = clustering_df['pattern'].astype(str)
-        clustering_df.to_csv("agglomerative_clustering.csv")
+        # clustering_df.to_csv("agglomerative_clustering.csv")
         clustering_df = clustering_df.sort_values(['pattern'])
 
         patterns_list, patterns_dict = [], {}
@@ -215,7 +220,10 @@ def draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_ext
             cluster_size = [cluster_dict[key] for key in cluster_dict.keys() if pattern in key]
             # set the tile size {(feature,binary_pattern):c_i * occurrence_of_binary_pattern}
             # data[(pattern, col)] = abs(math.log(cols_extracted[col] * (cluster_size[0]/tot_abnormal_records)))
-            data[(pattern, col)] = (cols_extracted[col] * math.log(cluster_size[0]))
+            if ds==6:
+                data[(pattern, col)] = (cols_extracted[col] * math.log(cluster_size[0]+1))
+            else:
+                data[(pattern, col)] = (cols_extracted[col] * math.log(cluster_size[0]))
 
             # set the color of the tiles
             if percentage_on_tile == 1.00:
@@ -263,6 +271,28 @@ def draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_ext
     dict_4 = dict(sorted(dict_4.items(), key=lambda item: item[1], reverse=True))
     dict_5 = dict(sorted(dict_5.items(), key=lambda item: item[1], reverse=True))
 
+
+    if ds == 6:
+        key_order = ["IncGotFeverCount", "IncGotHeadAcheCount", "IncCoronaPosCount", "IncGotCoughCount", "IncGotSoreThroatCount","IncAgeAbove60Count", "IncContWithConfCaseCount"]
+        dictionaries = [dict_1, dict_2, dict_3, dict_4, dict_5]
+        d1, d2, d3, d4, d5 = {}, {}, {}, {}, {}
+        for item in key_order:
+            for dictionary in dictionaries:
+                for key in dictionary.keys():
+                    if item == key[1]:
+                        if dictionary == dict_1:
+                            d1[key] = dict_1[key]
+                        elif dictionary == dict_2:
+                            d2[key] = dict_2[key]
+                        elif dictionary == dict_3:
+                            d3[key] = dict_3[key]
+                        elif dictionary == dict_4:
+                            d4[key] = dict_4[key]
+                        elif dictionary == dict_5:
+                            d5[key] = dict_5[key]
+
+        dict_1, dict_2, dict_3, dict_4, dict_5 = d1, d2, d3, d4, d5
+
     key_pair_dict, modified_dict = {}, {}
     for dictionary in [dict_1, dict_2, dict_3, dict_4, dict_5]:
         for key in dictionary.keys():
@@ -287,7 +317,6 @@ def draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_ext
                                                                              list_uppercase_index[2]:] + "\n" + "\n"
             key_pair_dict[key] = (key2, xtick_label)
             modified_dict[(key2, xtick_label)] = dictionary[key]
-            # del dictionary[key]
     data = modified_dict
 
     new_props = {}
@@ -304,7 +333,6 @@ def draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_ext
                 new_labels[key_pair_dict[key]] = labels[key_labels]
     labels = new_labels
 
-    # data = {**dict_1, **dict_2, **dict_3, **dict_4, **dict_5}
     labelizer = lambda k: labels[k]
 
     # handles of the color palette
@@ -318,8 +346,8 @@ def draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_ext
     # bbox_to_anchor = (how much to go along x-axis. Higher the further, how much to go along y-axis
     fig, ax = plt.subplots(constrained_layout=True)  # set constrained layout to true so nothing gets cropped
     mosaic(data, label_rotation=0, title="", horizontal=False, properties=props, labelizer=labelizer, gap=0.01,ax=ax)
-    fig.legend(handles=handles, bbox_to_anchor=(1.12, 0.8), loc='upper right', borderaxespad=0., fontsize=9)
-    plt.xticks(fontsize=14, rotation=0)
+    fig.legend(handles=handles, bbox_to_anchor=(1.15, 0.8), loc='upper right', borderaxespad=0., fontsize=9)
+    plt.xticks(fontsize=12, rotation=0)
     plt.yticks(fontsize=5)
     plt.grid(False)
     fig.savefig(tile_plot_file_name, bbox_inches='tight')
@@ -328,7 +356,7 @@ def create_association_graph(df):
     print("Plotting the association plot...")
     length_df = len(df)
     columns_list = list(df.iloc[:, 1:-1].columns)
-    with open('support_calc_qld_nodes.csv', 'w', newline='') as file:
+    with open(support_file, 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(["Col A", "Col B", "Support A", "Support notA", "Support B", "Support notB", "Support AB",
                          "BinaryCheck", "Support notAB", "BinaryCheck",
@@ -372,13 +400,13 @@ def create_association_graph(df):
                                  supportnAnB, (supportnAnB <= supportnA and supportnAnB <= supportnB),
                                  list(support_dict.keys())[list(support_dict.values()).index(max_support)],
                                  max_support])
-    support_df = pd.read_csv("support_calc_qld_nodes.csv")
+    support_df = pd.read_csv(support_file)
     support_df = support_df.sort_values(['MaximumSupport'], ascending=False)
-    support_df.to_csv("support_calc_qld_nodes.csv")
+    support_df.to_csv(support_file)
 
     feature_support_criteria_dict, feature_support_dict, features_normal, features_flipped = {}, {}, {}, {}
     words_to_remove_dict = {"Same": "Diff", "Present": "Absent", "Match": "Mismatch", "High": "Low",
-                            "Common": "Uncom", "Before": "After", "Complete": "Incomp"}
+                            "Common": "Uncom", "Before": "After", "Complete": "Incomp", "Inc": "Dec"}
     for index, row in support_df[:10].iterrows():
         feature_support_criteria_dict[(row["Col A"], row["Col B"])] = row["MaximumSupportCriteria"]
         feature_support_dict[(row["Col A"], row["Col B"])] = row["MaximumSupport"]
@@ -433,7 +461,7 @@ def create_association_graph(df):
     for key in features_normal.keys():
         adjusted_nodes_dict[key] = key + "\n" + str(int(float(features_normal[key]) * 100)) + "%"
 
-    # matching nodes and edges to find commong features
+    # matching nodes and edges to find common features
     list_edge_features = []
     for key in dict_edges.keys():
         list_edge_features.append(key[0])
