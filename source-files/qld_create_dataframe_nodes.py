@@ -102,7 +102,7 @@ def feature_reduction(df):
         for j in range(i + 1, len(columns)):
             correlation = df[columns[i]].corr(df[columns[j]])
             if correlation == 1:
-                print(columns[i], columns[j])
+                print("Correlated features: ", columns[i], columns[j])
     df.to_csv("../results/qld_nodes_dataset.csv")
     df.to_pickle("../results/qld_nodes_dataset.pkl")
     print("Completed generating nodes features...")
