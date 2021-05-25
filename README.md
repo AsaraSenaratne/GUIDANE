@@ -34,12 +34,12 @@ pip install -r requirements.txt
 
 Open a terminal and change directory to the cloned project:
 ```
-cd <path_to_directory>/abnormality-detection
+cd <path_to_directory>/abnormality-detection/source-files
 ```
 
 Run main.py:
 ```
-python3 main.py
+python3 -W ignore main.py
 ```
 
 ## Folder structure of the project
