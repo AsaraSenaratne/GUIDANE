@@ -189,4 +189,6 @@ def feature_reduction(df):
                 print(columns[i], columns[j])
     df.to_csv("../results/israel_nodes_dataset.csv")
     df.to_pickle("../results/israel_nodes_dataset.pkl")
+    print("Completed generating the Israel nodes dataset...")
+
 

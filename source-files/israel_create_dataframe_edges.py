@@ -154,9 +154,7 @@ def feature_reduction(df):
             correlation = df[columns[i]].corr(df[columns[j]])
             if correlation == 1:
                 print(columns[i], columns[j])
-    # df.drop('high_not_hospitalised_count', inplace=True, axis=1)
-    # df.drop('high_patient_count', inplace=True, axis=1)
     df.to_csv('../results/israel_edges_dataset.csv')
     df.to_pickle('../results/israel_edges_dataset.pkl')
-    print("Feature creation completed...")
+    print("Completed generating the Israel edges dataset...")
 

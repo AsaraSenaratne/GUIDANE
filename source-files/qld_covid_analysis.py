@@ -146,14 +146,12 @@ def merge_postcode_date():
     df["index"] = key
     df = df.set_index(["index"])
     df.rename(columns={'0': 'week_number', '1': 'postcode'}, inplace=True)
-    print(df)
     feature_reduction(df)
 
 def feature_reduction(df):
     for col in df.columns:
         count_unique = len(df[col].unique())
         if count_unique == 1:
-            print(col)
             df.drop(col, inplace=True, axis=1)
     columns = list(df.columns)
     for i in range(0, len(columns)-1):

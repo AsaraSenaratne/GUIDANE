@@ -191,7 +191,7 @@ def expand_kmeans_visualize(df, cols_extracted):
                 patterns_list.remove(c2)
         draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_extracted)
     else:
-        draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_extracted)
+        draw_mosaic(df, "", "", "", cols_extracted)
 
 def draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_extracted):
     print("Plotting the mosaic plot...")
@@ -346,7 +346,7 @@ def draw_mosaic(df, clustering_df, cluster_dict, leading_patterns_dict, cols_ext
     # bbox_to_anchor = (how much to go along x-axis. Higher the further, how much to go along y-axis
     fig, ax = plt.subplots(constrained_layout=True)  # set constrained layout to true so nothing gets cropped
     mosaic(data, label_rotation=0, title="", horizontal=False, properties=props, labelizer=labelizer, gap=0.01,ax=ax)
-    fig.legend(handles=handles, bbox_to_anchor=(1.15, 0.8), loc='upper right', borderaxespad=0., fontsize=9)
+    fig.legend(handles=handles, bbox_to_anchor=(1.16, 0.8), loc='upper right', borderaxespad=0., fontsize=9)
     plt.xticks(fontsize=12, rotation=0)
     plt.yticks(fontsize=5)
     plt.grid(False)

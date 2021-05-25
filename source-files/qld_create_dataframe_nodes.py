@@ -4,7 +4,6 @@ import statistics
 def create_dataframe():
     print("Generating features for QLD nodes dataset...")
     df = pd.read_pickle("../results/qld_groupby_postcode_week_reduced_cols_not_norm.pkl")
-    print("1")
     dataframe = pd.DataFrame()
     dataframe['week_number'] = df.week_number
     dataframe['postcode'] = df.postcode
@@ -91,15 +90,12 @@ def create_dataframe():
         else:
             new_col.append(0)
     dataframe["HighOldAgedCount"] = new_col
-    print("2")
     feature_reduction(dataframe)
 
 def feature_reduction(df):
-    print("3")
     for col in df.columns:
         count_unique = len(df[col].unique())
         if count_unique == 1:
-            print(col)
             df.drop(col, inplace=True, axis=1)
     columns = list(df.columns)
     for i in range(0, len(columns) - 1):

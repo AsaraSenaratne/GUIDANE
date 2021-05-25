@@ -9,6 +9,7 @@ def params(dataset):
         params.svm_output_pkl = "../results/svm_output_qld_nodes.pkl"
         params.svm_output_csv = "../results/svm_output_qld_nodes.csv"
         params.svm_output_file = "../results/svm_output_qld_nodes.pkl"
+        params.support_file = "../results/support_calc_qld_nodes.csv"
         params.name = "QLD Nodes"
         params.tile_plot_file_name = "../results/tile_plot_QLD_nodes.eps"
         params.association_plot_file_name = "../results/association_plot_QLD_nodes.eps"
