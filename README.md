@@ -44,7 +44,7 @@ python3 -W ignore main.py
 
 ## Folder structure of the project
 Assets folder - this folder contains the datasets used for analysis.  
-Results folder - all the plots, pickle files and CSV files that are generated as a result of program execution will be stored in this folder.  
+Results folder - this folder gets created at program execution. All the plots, pickle files and CSV files that are generated as a result of program execution will be stored in this folder.  
 Source folder - source code files are within this folder.  
 Other files:
 * LICENSE - contains information of the license under which this project is available.
