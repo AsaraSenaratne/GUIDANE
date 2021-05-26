@@ -10,9 +10,9 @@ def def_params(dataset):
     initial_attribute_count = pm.params.initial_attribute_count
     svm_output_pkl = pm.params.svm_output_pkl
     budget = pm.params.budget
-    skye_nodes_get_abnormal_count()
+    get_abnormal_counts()
 
-def skye_nodes_get_abnormal_count():
+def get_abnormal_counts():
     print("Started learning one-class SVM...")
     list_of_date_postcodes = list(dataframemain.index)
     new_dataframe = pd.DataFrame(list_of_date_postcodes)
