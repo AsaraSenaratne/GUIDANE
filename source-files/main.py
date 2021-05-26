@@ -7,6 +7,8 @@ import israel_create_dataframe_edges as isredges
 import pattern_gen as pg
 import svm_training as svm
 
+if not os.path.isdir("../results"):
+    os.mkdir("../results")
 
 print("  1 - QLD nodes dataset \n ",
       "2 - QLD temporal edges dataset \n ",
