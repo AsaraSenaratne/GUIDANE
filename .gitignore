@@ -4,6 +4,9 @@
 #CSV files
 *.csv
 
+#EPS files
+*.eps
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

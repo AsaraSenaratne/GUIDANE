@@ -142,7 +142,6 @@ def create_edges_among_weeks(df):
     feature_reduction(graph_features)
 
 def feature_reduction(df):
-    print(df.columns)
     for col in df.columns:
         count_unique = len(df[col].unique())
         if count_unique == 1:
