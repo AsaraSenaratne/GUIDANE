@@ -44,7 +44,7 @@ python3 -W ignore main.py
 
 ## Folder structure of the project
 Assets folder - this folder contains the datasets used for analysis.  
-Results folder - all the plots, pickle files and CSV files that are generated as a result of program execution will be stored in this folder.  
+Results folder - this folder gets created at program execution. All the plots, pickle files and CSV files that are generated as a result of program execution will be stored in this folder.  
 Source folder - source code files are within this folder.  
 Other files:
 * LICENSE - contains information of the license under which this project is available.
@@ -54,3 +54,15 @@ Other files:
 ## Reading the results folder
 The results folder contains all graphs and other intermediary results files generated at different steps of program execution. CSV files are available to view the initial nodes dataset, any intermediary supporting datasets built (such as merged datasets) and SVM output.  
 Visualization outputs are available as a tile plot and an association plot in .eps format.  
+
+## Execution time
+Below execution times were obtained after running all experiments on a 64-bit MacBook Air with an Intel i5 (1.6 GHz) dual core processor, 8 GBytes of memory, and MacOS Big Sur v11.2.3.
+
+| Dataset | Execution time |
+| :------------ |---------------:| 
+| QLD nodes dataset | 275.92 sec (4.60 min) |
+| QLD temporal edges dataset | 16.35 sec |
+| QLD spatial edges dataset | 1402.32 sec (23.37 min) |
+| QLD temporal and spatial edges dataset | 1922.89 sec (32.05 min) |
+| Israel nodes dataset | 32.47 sec |
+| Israel edges dataset | 544.64 sec (9.08 min) |
