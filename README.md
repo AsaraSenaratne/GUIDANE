@@ -59,7 +59,7 @@ Visualization outputs are available as a tile plot and an association plot in .e
 Below execution times were obtained after running all experiments on a 64-bit MacBook Air with an Intel i5 (1.6 GHz) dual core processor, 8 GBytes of memory, and MacOS Big Sur v11.2.3.
 
 | Dataset | Execution time |
-| :------------ |:---------------:| 
+| :------------ |---------------:| 
 | QLD nodes dataset | 275.92 sec (4.60 min) |
 | QLD temporal edges dataset | 16.35 sec |
 | QLD spatial edges dataset | 1402.32 sec (23.37 min) |
