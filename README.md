@@ -54,3 +54,20 @@ Other files:
 ## Reading the results folder
 The results folder contains all graphs and other intermediary results files generated at different steps of program execution. CSV files are available to view the initial nodes dataset, any intermediary supporting datasets built (such as merged datasets) and SVM output.  
 Visualization outputs are available as a tile plot and an association plot in .eps format.  
+
+## Execution time
+Below execution times were obtained after running all experiments on a 64-bit MacBook Air with an Intel i5 (1.6 GHz) dual core processor, 8 GBytes of memory, and MacOS Big Sur v11.2.3.
+
+| Dataset | Execution time (sec) |
+| :---: | :---: |
+| QLD nodes dataset | 275.92 (4.60 mins) |
+| :---: | :---: |
+| QLD temporal edges dataset | 16.35 |
+| :---: | :---: |
+| QLD spatial edges dataset | 1402.32 (23.37 mins) |
+| :---: | :---: |
+| QLD temporal and spatial edges dataset | 1922.89 (32.05 mins) |
+| :---: | :---: |
+| Israel nodes dataset | 32.47 |
+| :---: | :---: |
+| Israel edges dataset | 544.64 (9.08 mins) |
