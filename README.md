@@ -58,11 +58,11 @@ Visualization outputs are available as a tile plot and an association plot in .e
 ## Execution time
 Below execution times were obtained after running all experiments on a 64-bit MacBook Air with an Intel i5 (1.6 GHz) dual core processor, 8 GBytes of memory, and MacOS Big Sur v11.2.3.
 
-| Dataset | Execution time (sec) |
+| Dataset | Execution time |
 | :------------ |:---------------:| 
-| QLD nodes dataset | 275.92 (4.60 mins) |
-| QLD temporal edges dataset | 16.35 |
-| QLD spatial edges dataset | 1402.32 (23.37 mins) |
-| QLD temporal and spatial edges dataset | 1922.89 (32.05 mins) |
-| Israel nodes dataset | 32.47 |
-| Israel edges dataset | 544.64 (9.08 mins) |
+| QLD nodes dataset | 275.92 sec (4.60 min) |
+| QLD temporal edges dataset | 16.35 sec |
+| QLD spatial edges dataset | 1402.32 sec (23.37 min) |
+| QLD temporal and spatial edges dataset | 1922.89 sec (32.05 min) |
+| Israel nodes dataset | 32.47 sec |
+| Israel edges dataset | 544.64 sec (9.08 min) |
